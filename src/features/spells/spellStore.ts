@@ -1,27 +1,17 @@
 import { signal, computed } from '@preact/signals';
-import type { SpellData, SpellDatabase } from '../../types/spells';
+import type { SpellData } from '../../types/spells';
 import { currentDefinition, currentSession, modifyResource, setConcentration } from '../../state';
+import spellData from '../../data/spells.json';
 
 // Spell database loaded from JSON
-export const spellDatabase = signal<SpellData[]>([]);
-export const spellDatabaseLoaded = signal(false);
+export const spellDatabase = signal<SpellData[]>(spellData.spells);
+export const spellDatabaseLoaded = signal(true);
 export const spellDatabaseError = signal<string | null>(null);
 
-// Load spell database
+// Load spell database (now synchronous since we import directly)
 export async function loadSpellDatabase(): Promise<void> {
-  if (spellDatabaseLoaded.value) return;
-
-  try {
-    const response = await fetch('/src/data/spells.json');
-    if (!response.ok) {
-      throw new Error(`Failed to load spell database: ${response.status}`);
-    }
-    const data: SpellDatabase = await response.json();
-    spellDatabase.value = data.spells;
-    spellDatabaseLoaded.value = true;
-  } catch (error) {
-    spellDatabaseError.value = error instanceof Error ? error.message : 'Failed to load spells';
-  }
+  // Data is already loaded via import
+  return;
 }
 
 // Get character's known/available spells
